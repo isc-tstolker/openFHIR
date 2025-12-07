@@ -27,6 +27,7 @@ import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Ratio;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.TimeType;
+import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 import org.springframework.stereotype.Component;
 
 /**
@@ -187,16 +188,18 @@ public class FhirInstancePopulator {
     }
 
     private void populateStringType(Object toPopulate, StringType data) {
-        if (toPopulate instanceof Enumeration) {
-            ((Enumeration<?>) toPopulate).setValueAsString(data.getValueAsString());
-        } else if (toPopulate instanceof DateTimeType) {
-            ((DateTimeType) toPopulate).setValueAsString(data.getValueAsString());
-        }else if (toPopulate instanceof InstantType) {
-            ((InstantType) toPopulate).setValueAsString(data.getValueAsString());
-        } else if (toPopulate instanceof IntegerType) {
-            ((IntegerType) toPopulate).setValue(Integer.valueOf(data.getValue()));
-        }else if (toPopulate instanceof PrimitiveType<?>) {
-            ((PrimitiveType<String>) toPopulate).setValue(data.getValue());
+        if (toPopulate instanceof Enumeration<?> enumeration) {
+            enumeration.setValueAsString(data.getValueAsString());
+        } else if (toPopulate instanceof DateTimeType dateTimeType) {
+            dateTimeType.setValueAsString(data.getValueAsString());
+        } else if (toPopulate instanceof InstantType instantType) {
+            instantType.setValueAsString(data.getValueAsString());
+        } else if (toPopulate instanceof IntegerType integerType) {
+            integerType.setValue(Integer.valueOf(data.getValue()));
+        } else if (toPopulate instanceof PrimitiveType<?> primitiveType) {
+            ((PrimitiveType<String>) primitiveType).setValue(data.getValue());
+        } else if (toPopulate instanceof XhtmlNode xhtmlNode) {
+            xhtmlNode.setValueAsString(data.getValue());
         }
     }
 

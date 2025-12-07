@@ -43,6 +43,17 @@ public class BloodPressureToFhirTest extends GenericTest {
         final Bundle bundle = openEhrToFhir.compositionToFhir(context, composition, operationaltemplate);
 
         assertBloodPressureFhir(bundle);
+
+        // assert narrative
+        final Observation obs1 = bundle.getEntry().stream()
+                .map(en -> ((Observation) en.getResource()))
+                .filter(en -> en.getCode().getText().equals("First bp"))
+                .findFirst().orElse(null);
+        final String narrativeDivAsString = obs1.getText().getDivAsString();
+        Assert.assertEquals("<div xmlns=\"http://www.w3.org/1999/xhtml\">Hot flushes</div>",
+                            narrativeDivAsString);
+        Assert.assertEquals("generated", obs1.getText().getStatusElement().getValueAsString());
+
     }
 
     @Test
