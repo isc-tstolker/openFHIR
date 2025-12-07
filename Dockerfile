@@ -7,7 +7,7 @@ RUN mvn -B clean package -DskipTests
 
 # Path: Dockerfile
 # java runtime image, java 17
-FROM openjdk:17-slim
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 CMD ["java", "-jar", "app.jar"]
