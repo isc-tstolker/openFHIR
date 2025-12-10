@@ -841,7 +841,8 @@ public class OpenEhrToFhir {
         return new FindingOuterMost(toSetCriteriaOn, null);
     }
 
-    private void filterHardcodedReturnBasedOnWhere(final Object hardcodedReturn, final String path, final List<Base> listToFilter) {
+    private void filterHardcodedReturnBasedOnWhere(final Object hardcodedReturn, final String path,
+                                                   final List<Base> listToFilter) {
         final String extractedWhere = openFhirStringUtils.extractWhereCondition(path);
         if (extractedWhere != null && listToFilter != null) {
             final String firstPath = extractedWhere.replace(OpenFhirStringUtils.WHERE + "(", "").split("\\.")[0];
@@ -857,9 +858,9 @@ public class OpenEhrToFhir {
                 }
             }
 
-            if(hardcodedReturn instanceof FhirInstanceCreator.InstantiateAndSetReturn) {
+            if (hardcodedReturn instanceof FhirInstanceCreator.InstantiateAndSetReturn) {
                 ((FhirInstanceCreator.InstantiateAndSetReturn) hardcodedReturn).setReturning(relevant);
-            } else if(hardcodedReturn instanceof FindingOuterMost) {
+            } else if (hardcodedReturn instanceof FindingOuterMost) {
                 ((FindingOuterMost) hardcodedReturn).setLastObject(relevant);
             }
         }
@@ -868,7 +869,8 @@ public class OpenEhrToFhir {
     private void filterHardcodedReturnBasedOnWhere(final FhirInstanceCreator.InstantiateAndSetReturn hardcodedReturn) {
         final String extractedWhere = openFhirStringUtils.extractWhereCondition(hardcodedReturn.getPath());
         if (extractedWhere != null && hardcodedReturn.isList()) {
-            filterHardcodedReturnBasedOnWhere(hardcodedReturn, hardcodedReturn.getPath(), (List<Base>) hardcodedReturn.getReturning());
+            filterHardcodedReturnBasedOnWhere(hardcodedReturn, hardcodedReturn.getPath(),
+                                              (List<Base>) hardcodedReturn.getReturning());
         }
     }
 
@@ -1042,7 +1044,8 @@ public class OpenEhrToFhir {
                     // get all entries from the flat path that match the simplified flat path with regex pattern
                     final List<String> matchingEntries = openFhirStringUtils.getAllEntriesThatMatch(withRegex,
                                                                                                     flatJsonObject);
-                    final Map<String, List<String>> joinedEntries = openFhirStringUtils.joinValuesThatAreOne(matchingEntries);
+                    final Map<String, List<String>> joinedEntries = openFhirStringUtils.joinValuesThatAreOne(
+                            matchingEntries);
                     handleRegularMapping(mapping, resourceType, parentFollowedByFhir,
                                          parentFollowedByOpenEhrWithOutAqlPath,
                                          theMapper,
@@ -1146,7 +1149,7 @@ public class OpenEhrToFhir {
             if (values == null) {
                 values = new ArrayList<>();
             }
-            
+
             OpenEhrToFhirHelper openEhrToFhirHelper = OpenEhrToFhirHelper.builder()
                     .mainArchetype(theMapper.getOpenEhrConfig().getArchetype())
                     .targetResource(resourceType)
@@ -1209,12 +1212,10 @@ public class OpenEhrToFhir {
         final List<OpenFhirFhirConnectModelMapper> slotArchetypeMapperss = openFhirTemplateRepo.getMapperForArchetype(
                 templateId, mapping.getSlotArchetype());
         if (slotArchetypeMapperss == null) {
-            log.error("Couldn't find referenced slot archetype mapper {}. Referenced in {}", mapping.getSlotArchetype(),
-                      mapping.getName());
-            throw new IllegalArgumentException(
-                    String.format("Couldn't find referenced slot archetype mapper %s. Referenced in %s",
-                                  mapping.getSlotArchetype(),
-                                  mapping.getName()));
+            log.warn("Couldn't find referenced slot archetype mapper {}. Referenced in {}. Aborting mapping.",
+                     mapping.getSlotArchetype(),
+                     mapping.getName());
+            return;
         }
         for (final OpenFhirFhirConnectModelMapper slotArchetypeMappers : slotArchetypeMapperss) {
             boolean possibleRecursion = slotArchetypeMappers.getName().equals(theMapper.getName());
@@ -1384,7 +1385,7 @@ public class OpenEhrToFhir {
 //                    final String rootWithAttrs = targetRoot + ((targetAttributes != null && !targetAttributes.isEmpty()) ? "" : ("/" + targetAttributes.get(0)));
                     final String piped = openFhirStringUtils.addRegexPatternToSimplifiedFlatFormat(targetRoot);
                     final List<String> allEntriesThatMatch = openFhirStringUtils.getAllEntriesThatMatch(piped,
-                                                                                                         flatJsonObject);
+                                                                                                        flatJsonObject);
                     fullOpenEhrPath = allEntriesThatMatch.get(0);
                 }
                 int index = getHardcodedIndex(mapping, flatJsonObject);
@@ -1396,12 +1397,12 @@ public class OpenEhrToFhir {
                 }
                 values.add(new OpenEhrToFhirHelper.DataWithIndex(new StringType(hardcodedValue), index,
                                                                  fullOpenEhrPath));
-            } 
+            }
             // TO DO : Program mapping from openEHR to FHIR
             // else if(mapping.getMappingCode()!=null){
-               
+
             // }
-            
+
             else {
                 values = joinedEntries.values().stream()
                         .map(strings -> valueToDataPoint(strings, rmType, flatJsonObject, true))
@@ -1414,12 +1415,12 @@ public class OpenEhrToFhir {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         }
-        
+
         // Ensure we never return null to prevent NullPointerException
         if (values == null) {
             values = new ArrayList<>();
         }
-        
+
         return values;
     }
 
@@ -1750,14 +1751,15 @@ public class OpenEhrToFhir {
         final String ordinal = fetchValue(joinedValues, "ordinal");
 
         return switch (targetType) {
-            case DV_PROPORTION,  "PROPORTION" -> handleProportion(joinedValues, valueHolder, lastIndex, path);
+            case DV_PROPORTION, "PROPORTION" -> handleProportion(joinedValues, valueHolder, lastIndex, path);
             case DV_QUANTITY, "QUANTITY" -> handleQuantity(joinedValues, valueHolder, lastIndex, path, value, code);
             case DV_COUNT -> handleCount(valueHolder, lastIndex, path);
             case DV_DATE_TIME, "DATETIME" -> handleDateTime(valueHolder, lastIndex, path);
             case DV_TIME, "TIME" -> handleTime(valueHolder, lastIndex, path);
             case DV_BOOL, "BOOL" -> handleBoolean(valueHolder, lastIndex, path);
             case DV_DATE, "DATE" -> handleDate(valueHolder, lastIndex, path);
-            case FhirConnectConst.DV_CODED_TEXT, FhirConnectConst.DV_ORDINAL, "CODEABLECONCEPT" -> handleCodeableConcept(valueHolder, lastIndex, path, value, terminology, code, ordinal);
+            case FhirConnectConst.DV_CODED_TEXT, FhirConnectConst.DV_ORDINAL, "CODEABLECONCEPT" ->
+                    handleCodeableConcept(valueHolder, lastIndex, path, value, terminology, code, ordinal);
             case CODE_PHRASE, "CODING" -> handleCoding(valueHolder, lastIndex, path, terminology, code, value);
             case DV_MULTIMEDIA, "MEDIA" -> handleMedia(valueHolder, lastIndex, path);
             case FhirConnectConst.DV_TEXT, "STRING", "TEXT" -> handleString(valueHolder, lastIndex, path, canBeNull);
@@ -1811,7 +1813,8 @@ public class OpenEhrToFhir {
     private OpenEhrToFhirHelper.DataWithIndex handleCount(final JsonObject valueHolder,
                                                           final Integer lastIndex,
                                                           final String path) {
-        return new OpenEhrToFhirHelper.DataWithIndex(new IntegerType(getFromValueHolder(valueHolder, path)), lastIndex, path);
+        return new OpenEhrToFhirHelper.DataWithIndex(new IntegerType(getFromValueHolder(valueHolder, path)), lastIndex,
+                                                     path);
     }
 
     private OpenEhrToFhirHelper.DataWithIndex handleQuantity(final List<String> joinedValues,
@@ -1942,7 +1945,7 @@ public class OpenEhrToFhir {
             data.addCoding(new Coding(systemValue, codeValue, textValue));
         }
 
-        if(ordinalValue != null) {
+        if (ordinalValue != null) {
             data.setText(ordinalValue);
         }
 
@@ -2038,7 +2041,8 @@ public class OpenEhrToFhir {
                                                                final String path,
                                                                final String id) {
         final Identifier identifier = new Identifier();
-        identifier.setValue(getFromValueHolder(valueHolder, StringUtils.isEmpty(id) ? (path + "/identifier_value|id") : id));
+        identifier.setValue(
+                getFromValueHolder(valueHolder, StringUtils.isEmpty(id) ? (path + "/identifier_value|id") : id));
         return new OpenEhrToFhirHelper.DataWithIndex(identifier, lastIndex, path);
     }
 
