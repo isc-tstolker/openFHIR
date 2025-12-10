@@ -164,6 +164,24 @@ public class OpenEhrToFhir {
         final Set<String> createdAndAdded = new HashSet<>();
         final Set<String> archetypesAlreadyProcessed = new HashSet<>();
 
+        // first the parent itself
+        // get mapper by templateid (context) + archetype id (model)
+        final List<OpenFhirFhirConnectModelMapper> parentMappers = openFhirTemplateRepo.getMapperForArchetype(
+                templateId, composition.getArchetypeNodeId());
+        if (parentMappers != null) {
+            handleMappings(parentMappers,
+                           createdAndAdded,
+                           intermediateCaches,
+                           isMultipleByResourceType,
+                           flatJsonObject,
+                           webTemplate,
+                           new HashMap<>(),
+                           creatingBundle,
+                           archetypesAlreadyProcessed,
+                           composition.getArchetypeNodeId(),
+                           true);
+        }
+
         // loop through top level content/archetypes within the Composition
         for (final ContentItem archetypesWithinContent : composition.getContent()) {
 
@@ -193,8 +211,8 @@ public class OpenEhrToFhir {
                            instantiatedIntermediateElements,
                            creatingBundle,
                            archetypesAlreadyProcessed,
-                           archetypesWithinContent,
-                           archetypeNodeId);
+                           archetypeNodeId,
+                           false);
         }
 
         return creatingBundle;
@@ -215,7 +233,6 @@ public class OpenEhrToFhir {
      *         key'd by created object + fhir path + openehr path)
      * @param creatingBundle Bundle that is being created as part of the mappings
      * @param archetypesAlreadyProcessed set of archetypes already processed
-     * @param archetypesWithinContent archetype within a Composition that is currently being mapped
      * @param archetypeNodeId archetype id within a Composition that is currently being mapped
      */
     private void handleMappings(final List<OpenFhirFhirConnectModelMapper> theMappers,
@@ -227,8 +244,8 @@ public class OpenEhrToFhir {
                                 final Map<String, Object> instantiatedIntermediateElements,
                                 final Bundle creatingBundle,
                                 final Set<String> archetypesAlreadyProcessed,
-                                final ContentItem archetypesWithinContent,
-                                final String archetypeNodeId) {
+                                final String archetypeNodeId,
+                                final boolean mappingRootElement) {
         for (final OpenFhirFhirConnectModelMapper theMapper : theMappers) {
             if (theMapper.getFhirConfig() == null) {
                 // if fhir config is null, it means it's a slot mapper and it can't be a first-level Composition.content one
@@ -250,7 +267,7 @@ public class OpenEhrToFhir {
             // helper POJOs that help for openEHR to FHIR mappings
             final List<OpenEhrToFhirHelper> helpers = new ArrayList<>();
             String firstFlatPath;
-            if (!theMapper.getOpenEhrConfig().getArchetype().contains("CLUSTER")) {
+            if (!theMapper.getOpenEhrConfig().getArchetype().contains("CLUSTER") && !mappingRootElement) {
                 firstFlatPath =
                         webTemplate.getTree().getId() + "/content[" + theMapper.getOpenEhrConfig().getArchetype() + "]";
             } else {
@@ -268,7 +285,8 @@ public class OpenEhrToFhir {
                                         null,
                                         null,
                                         firstFlatPath,
-                                        false);
+                                        false,
+                                        mappingRootElement);
 
             // within helpers, you should have everything you need to create a FHIR Resource now
             final List<Resource> created = createResourceFromOpenEhrToFhirHelper(helpers,
@@ -291,7 +309,7 @@ public class OpenEhrToFhir {
                                                                                          : instantiatedIntermediateElements);
 
             log.info("Constructed {} resources for archetype {}.", created.size(),
-                     archetypesWithinContent.getArchetypeNodeId());
+                     archetypeNodeId);
 
             addEntriesToBundle(creatingBundle, created, createdAndAdded);
             archetypesAlreadyProcessed.add(archetypeNodeId);
@@ -923,7 +941,8 @@ public class OpenEhrToFhir {
                                      final String parentFollowedByFhir,
                                      final String parentFollowedByOpenEhr,
                                      final String slotContext,
-                                     final boolean possibleRecursion) {
+                                     final boolean possibleRecursion,
+                                     final boolean mappingRootElement) {
         if (mappings == null) {
             return;
         }
@@ -960,7 +979,7 @@ public class OpenEhrToFhir {
                     .replace(FhirConnectConst.REFERENCE + "/", "")
                     .replace(OPENEHR_ARCHETYPE_FC, firstFlatPath)
                     .replace(OPENEHR_COMPOSITION_FC, webTemplate.getTree().getId());
-            String openehrAqlPath = getOpenEhrKey(fixedOpenEhr, parentFollowedByOpenEhr, firstFlatPath);
+            String openehrAqlPath = mappingRootElement && !definedMappingWithOpenEhr.startsWith(OPENEHR_COMPOSITION_FC) ? firstFlatPath : getOpenEhrKey(fixedOpenEhr, parentFollowedByOpenEhr, firstFlatPath);
             String openehr = getPathFromAqlPath(openehrAqlPath, webTemplate, mapping.getWith().getType());
             String parentFollowedByOpenEhrWithOutAqlPath = null;
             if (parentFollowedByOpenEhr != null) {
@@ -1171,7 +1190,8 @@ public class OpenEhrToFhir {
                                                                                       parentFollowedByFhir),
                                         definedMappingWithOpenEhr == null ? firstFlatPath : definedMappingWithOpenEhr,
                                         slotContext,
-                                        possibleRecursion);
+                                        possibleRecursion,
+                                        false);
         }
     }
 
@@ -1217,7 +1237,8 @@ public class OpenEhrToFhir {
                                         helpers, webTemplate, flatJsonObject, true, childWithParentFhirPath,
                                         definedMappingWithOpenEhr,
                                         definedMappingWithOpenEhr,
-                                        possibleRecursion);
+                                        possibleRecursion,
+                                        false);
 
             // slot archetype can be followed by other mappers as well
             if (mapping.getFollowedBy() != null) {
@@ -1236,7 +1257,7 @@ public class OpenEhrToFhir {
                                                                                           mapping.getFhirCondition(),
                                                                                           resourceType,
                                                                                           parentFollowedByFhir),
-                                            definedMappingWithOpenEhr, slotContext, possibleRecursion);
+                                            definedMappingWithOpenEhr, slotContext, possibleRecursion, false);
             }
         }
     }
@@ -1311,7 +1332,8 @@ public class OpenEhrToFhir {
                                         parentFollowedByFhir,
                                         parentFollowedByOpenEhr,
                                         slotContext,
-                                        possibleRecursion);
+                                        possibleRecursion,
+                                        false);
         } else {
             // recursive call so all $reference.mappings are handled
             prepareOpenEhrToFhirHelpers(theMapper,
@@ -1325,7 +1347,8 @@ public class OpenEhrToFhir {
                                         parentFollowedByFhir,
                                         parentFollowedByOpenEhr,
                                         slotContext,
-                                        possibleRecursion);
+                                        possibleRecursion,
+                                        false);
         }
 
     }
