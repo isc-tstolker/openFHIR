@@ -222,23 +222,23 @@ public class IntermediateCacheProcessing {
                                           final String fullOpenEhrPath,
                                           final String followedByParentOpenEhr,
                                           final boolean lastOpenEhrIsDigit) {
+        final String fhirPath = path + (StringUtils.isEmpty(hardcodedReturn.getPath()) ? "" : ("." + hardcodedReturn.getPath()));
         if (hardcodedReturn.isList()) {
             final String openEhrPath = lastOpenEhrIsDigit ? fullOpenEhrPath.substring(0, fullOpenEhrPath.lastIndexOf(":")) : fullOpenEhrPath;
 
             // puts in the list
-            instantiatedIntermediateElements.put(createKeyForIntermediateElements(objectRef, path + "." + hardcodedReturn.getPath(), openEhrPath),
+            instantiatedIntermediateElements.put(createKeyForIntermediateElements(objectRef, fhirPath, openEhrPath),
                     hardcodedReturn.getReturning());
 
-            final Integer lastIndex = openFhirStringUtils.getLastIndex(fullOpenEhrPath);
             final List returningList = (List) hardcodedReturn.getReturning();
             if (lastOpenEhrIsDigit) {
                 final Object toAddToCache = returningList.get(returningList.size() - 1); // todo: always takes the last one, is this ok?
-                instantiatedIntermediateElements.put(createKeyForIntermediateElements(objectRef, path + "." + hardcodedReturn.getPath(),
-                                fullOpenEhrPath),
+                instantiatedIntermediateElements.put(createKeyForIntermediateElements(objectRef, fhirPath,
+                                                                                      fullOpenEhrPath),
                         toAddToCache);
             }
         } else {
-            instantiatedIntermediateElements.put(createKeyForIntermediateElements(objectRef, path + "." + hardcodedReturn.getPath(), fullOpenEhrPath),
+            instantiatedIntermediateElements.put(createKeyForIntermediateElements(objectRef, fhirPath, fullOpenEhrPath),
                     hardcodedReturn.getReturning());
         }
 
@@ -247,7 +247,7 @@ public class IntermediateCacheProcessing {
             populateIntermediateCache(hardcodedReturn.getInner(),
                     objectRef,
                     instantiatedIntermediateElements,
-                    path + "." + hardcodedReturn.getPath(),
+                                      fhirPath,
                     fullOpenEhrPath,
                     null,
                     followedByParentOpenEhr);
