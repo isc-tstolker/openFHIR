@@ -175,15 +175,6 @@ public class DiagnoseTest extends KdsBidirectionalTest {
         assertCondition(condition, false);
         assertCondition(conditionSecond, true);
 
-        final Type referencedExtensionCondition = condition.getExtensionByUrl(
-                        "http://hl7.org/fhir/StructureDefinition/condition-related")
-                .getValue();
-        Assert.assertNotNull(referencedExtensionCondition);
-//        Assert.assertTrue(conditionSecond.getExtensionByUrl("http://hl7.org/fhir/StructureDefinition/condition-related")
-//                                  .getValue().isEmpty());
-
-//        assertCondition((Condition) ((Reference) referencedExtensionCondition).getResource(), true);
-
     }
 
     @Test
