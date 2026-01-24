@@ -77,11 +77,17 @@ public class FhirInstancePopulator {
         if (lastElement.toString() == null || objectIsEmpty(lastElement)) {
             populateElement(lastElement, data); // Populate last element if empty
         } else {
+            if (data instanceof StringType && "openFhirDontPopulate".equals(((StringType) data).getValueAsString())) {
+                return;
+            }
             ((List<Object>) toPopulate).add(data); // Otherwise, add new entry
         }
     }
 
     private void handleSpecificTypePopulation(final Object toPopulate, final Base data) {
+        if (data instanceof StringType && "openFhirDontPopulate".equals(((StringType) data).getValueAsString())) {
+            return;
+        }
         if (data instanceof Quantity) {
             populateQuantity(toPopulate, (Quantity) data);
         } else if (data instanceof IntegerType) {

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -73,14 +74,17 @@ public class OpenEhrConditionEvaluator {
         final JsonObject modifiedJsonObject = new JsonObject();
         final Set<String> notAddingForThisCondition = new HashSet<>();
         for (final String extractedValueKey : extractedValueKeys) {
-            final String preparedTargetAttribute = openFhirStringUtils.prepareOpenEhrSyntax(
-                    targetAttribute,
-                    "");
-            final String openEhrKey = preparedTargetAttribute == null ? extractedValueKey : String.format("%s/%s", extractedValueKey, preparedTargetAttribute);
-            final JsonPrimitive extractedValueJson = fullFlatPath.getAsJsonPrimitive(openEhrKey);
+
+            final boolean subPath = targetAttribute.startsWith("|");
+            if(subPath && !extractedValueKey.endsWith(targetAttribute)){
+                // wrong subpath to check for
+                continue;
+            }
+            final String keyToCheckFor = subPath ? extractedValueKey : extractedValueKey + "/" + targetAttribute;
+            final JsonPrimitive extractedValueJson = fullFlatPath.getAsJsonPrimitive(keyToCheckFor);
             final String extractedValue = extractedValueJson == null ? "" : extractedValueJson.getAsString();
 
-            if (openEhrCondition.getCriteria().contains(extractedValue)) {
+            if (StringUtils.isNotEmpty(extractedValue) && openEhrCondition.getCriteria().contains(extractedValue)) {
                 fullFlatPath.entrySet().forEach((entry) -> {
                     if (entry.getKey().startsWith(extractedValueKey)) {
                         modifiedJsonObject.add(entry.getKey(), entry.getValue());
@@ -91,7 +95,7 @@ public class OpenEhrConditionEvaluator {
 
             log.info(
                     "Flat path {} evaluated to {}, condition.criteria requires it to be {}, therefore excluding all {} from mapping.",
-                    openEhrKey, extractedValue, openEhrCondition.getCriteria(), extractedValueKey);
+                    extractedValueKey, extractedValue, openEhrCondition.getCriteria(), extractedValueKey);
             notAddingForThisCondition.add(extractedValueKey);
 
             fullFlatPath.entrySet().forEach((entry) -> {

@@ -166,7 +166,27 @@ mappings:
           operator: "one of"
           criteria: "528"
 
-
+      - name: "aborted"
+        fhir:
+          - path: "status"
+            value: "stopped"
+        openehrCondition:
+          targetRoot: "$openehrRoot"
+          targetAttribute: "defining_code/code_string"
+          operator: "one of"
+          criteria: "531"
+        openehr:
+          - path: "defining_code/terminology_id"
+            value: "openehr"
+          - path: "value"
+            value: "Aborted"
+          - path: "defining_code/code_string"
+            value: "531"
+        fhirCondition:
+          targetRoot: "$fhirRoot"
+          targetAttribute: "status"
+          operator: "one of"
+          criteria: "stopped"
 
   - name: "study"
     with:

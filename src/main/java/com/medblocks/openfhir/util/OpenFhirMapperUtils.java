@@ -318,7 +318,7 @@ public class OpenFhirMapperUtils {
                             .replace(FhirConnectConst.OPENEHR_ARCHETYPE_FC + ".", "")
                             .replace(FhirConnectConst.OPENEHR_ARCHETYPE_FC, ""));
                 } else if (conditionRoot.equals(FhirConnectConst.OPENEHR_ARCHETYPE_FC)) {
-                    openehrCondition.setTargetRoot(openehr);
+                    openehrCondition.setTargetRoot(slotContext);
                 } else {
                     openehrCondition.setTargetRoot(
                             new OpenFhirStringUtils().prepareOpenEhrSyntax(conditionRoot,
