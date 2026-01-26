@@ -136,9 +136,17 @@ public class DiagnoseTest extends KdsBidirectionalTest {
         // - name: "mehrfachcodierung"
         final CodeableConcept mehrfachcodierung = (CodeableConcept) icd10code.getExtensionByUrl(
                 "http://fhir.de/StructureDefinition/icd-10-gm-mehrfachcodierungs-kennzeichen").getValue();
-        Assert.assertEquals("!", mehrfachcodierung.getCodingFirstRep().getCode());
+
+        if(second) {
+            Assert.assertEquals("*", mehrfachcodierung.getCodingFirstRep().getCode());
+            Assert.assertEquals("*", mehrfachcodierung.getCodingFirstRep().getDisplay());
+        } else {
+            Assert.assertEquals("†", mehrfachcodierung.getCodingFirstRep().getCode()); // because openEhr condition says if it's 'at0002' it needs to be † and flatpath of diagnose/diagnose:0/mehrfachkodierungskennzeichen_icd-10-gm/mehrfachkodierungkennzeichen|code is at0002
+            Assert.assertEquals("†", mehrfachcodierung.getCodingFirstRep().getDisplay());
+        }
+
         Assert.assertEquals("http://fhir.de/ValueSet/icd-10-gm-mehrfachcodierungs-kennzeichen", mehrfachcodierung.getCodingFirstRep().getSystem());
-        Assert.assertEquals("!", mehrfachcodierung.getCodingFirstRep().getDisplay());
+
 
         // - name: "seitenlokalisation"
         final CodeableConcept seitenlokalisation = (CodeableConcept) icd10code.getExtensionByUrl(
@@ -165,16 +173,7 @@ public class DiagnoseTest extends KdsBidirectionalTest {
         final Condition conditionSecond = (Condition) allConditions.get(1).getResource(); // second condition
 
         assertCondition(condition, false);
-//        assertCondition(conditionSecond, true);
-
-        final Type referencedExtensionCondition = condition.getExtensionByUrl(
-                        "http://hl7.org/fhir/StructureDefinition/condition-related")
-                .getValue();
-        Assert.assertNotNull(referencedExtensionCondition);
-        Assert.assertTrue(conditionSecond.getExtensionByUrl("http://hl7.org/fhir/StructureDefinition/condition-related")
-                                  .getValue().isEmpty());
-
-        assertCondition((Condition) ((Reference) referencedExtensionCondition).getResource(), true);
+        assertCondition(conditionSecond, true);
 
     }
 

@@ -47,7 +47,7 @@ public class StudienteilnahmeTest extends KdsBidirectionalTest {
 
         final Consent consent = (Consent) allConsents.get(0).getResource();
 
-        Assert.assertEquals("entered-in-error", consent.getStatusElement().getValueAsString());
+        Assert.assertEquals("stopped", consent.getStatusElement().getValueAsString());
 
         //  - name: "period"
         final DateTimeType periodStart = consent.getProvision().getPeriod().getStartElement();
