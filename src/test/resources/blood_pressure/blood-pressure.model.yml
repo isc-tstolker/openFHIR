@@ -56,21 +56,6 @@ mappings:
       fhir: "$resource.component.interpretation.text"
       openehr: "$archetype/data[at0001]/events[at0006]/data[at0003]/items[at1059]"
 
-  - name: "narrativeText"
-    with:
-      fhir: "$resource.text"
-      openehr: "$archetype"
-    manual:
-      - name: "status"
-        fhir:
-          - path: "status"
-            value: "generated"
-      - name: "div"
-        fhir:
-          - path: "div"
-            value: "<div xmlns=\"http://www.w3.org/1999/xhtml\">Hot flushes</div>"
-
-
   - name: "description"
     with:
       fhir: "$resource.code.text"
@@ -106,7 +91,6 @@ mappings:
     with:
       fhir: "$resource.bodySite"
       openehr: "$archetype/protocol[at0011]/items[at0014]"
-      
     fhirCondition:
       targetRoot: "$resource.bodySite"
       targetAttribute: "text"
