@@ -1,0 +1,75 @@
+{
+	"resourceType": "ConceptMap",
+	"id": "StateOfDress",
+	"url": "http://open-fhir.com/StateOfDress",
+	"description": "Map State-Of-Dress codes from Loinc to openEHR v.v.",
+	"group": [
+		{
+			"source": "local",
+			"target": "http://loinc.org",
+			"element": [
+				{
+					"code": "at0010",
+					"display": "Fully clothed, including shoes",
+					"target": [
+						{
+							"code": "LA11873-9",
+							"display": "Street clothes & shoes",
+							"equivalence": "equivalent"
+						}
+					]
+				},
+				{
+					"code": "at0011",
+					"display": "Lightly clothed/underwear",
+					"target": [
+						{
+							"code": "LA11871-3",
+							"display": "Underwear or less",
+							"equivalence": "inexact"
+						}
+					]
+				},
+				{
+					"code": "at0013",
+					"display": "Naked",
+					"target": [
+						{
+							"code": "LA11871-3",
+							"display": "Underwear or less",
+							"equivalence": "inexact"
+						}
+					]
+				}
+			]
+		},
+		{
+			"source": "http://loinc.org",
+			"target": "local",
+			"element": [
+				{
+					"code": "LA11873-9",
+					"display": "Street clothes & shoes",
+					"target": [
+						{
+							"code": "at0011",
+							"display": "Fully clothed, including shoes",
+							"equivalence": "equivalent"
+						}
+					]
+				},
+				{
+					"code": "LA11871-3",
+					"display": "Underwear or less",
+					"target": [
+						{
+							"code": "at0011",
+							"display": "Lightly clothed/underwear",
+							"equivalence": "equivalent"
+						}
+					]
+				}
+			]
+		}
+	]
+}

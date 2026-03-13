@@ -9,14 +9,19 @@ spec: # schema specific to the FHIRConnect v0.0.1 engine
   openEhrConfig:
     archetype: "openEHR-EHR-OBSERVATION.body_weight.v2"
   fhirConfig:
-    structureDefinition: http://hl7.org/fhir/StructureDefinition/Observation
+    structureDefinition: http://hl7.org/fhir/StructureDefinition/bodyweight
 
 preprocessor:
-  fhirCondition:
-    targetRoot: "$resource"
-    targetAttribute: "category.coding.code"
-    operator: "one of"
-    criteria: "weight"
+  fhirConditions:
+    - targetRoot: "$resource"
+      targetAttribute: "category.coding"
+      operator: "one of"
+      criteria: "[http://terminology.hl7.org/CodeSystem/observation-category|vital-signs]"
+
+    - targetRoot: "$resource"
+      targetAttribute: "status"
+      operator: "one of"
+      criteria: "[final]"
 
 mappings:
   - name: "weight"
@@ -26,7 +31,7 @@ mappings:
       
     fhirCondition:
       targetRoot: "$resource"
-      targetAttribute: "code.coding.code"
+      targetAttribute: "code.coding"
       operator: "one of"
       criteria: "[$loinc.29463-7, $snomed.27113001]"
       
@@ -40,110 +45,26 @@ mappings:
       fhir: "$resource.note.text"
       openehr: "$archetype/data[at0002]/events[at0003]/data[at0001]/items[at0024]"
       
-  - name: "stateOfDressNaked"
+  - name: "stateOfDress"
     with:
       fhir: "$resource.component"
-      openehr: "$archetype/data[at0002]/events[at0003]/state[at0008]/items[at0009]/value/value"
+      openehr: "$archetype/data[at0002]/events[at0003]/state[at0008]/items[at0009]/value/defining_code/code_string"
     openehrCondition:
       targetRoot: "$archetype"
       targetAttribute: "data[at0002]/events[at0003]/state[at0008]/items[at0009]/value/defining_code/code_string"
       operator: "one of"
-      criteria: "[at0011, at0013]"
+      criteria: "[at0010, at0011, at0013]"
     fhirCondition:
-      targetRoot: "$resource.component"
-      targetAttribute: "valueCodeableConcept"
+      targetRoot: "$resource"
+      targetAttribute: "component.code.coding"
       operator: "one of"
-      criteria: "[$loinc.LA11871-3]"
+      criteria: "[$loinc.8352-7]"
     followedBy:
       mappings:
-        - name: "hardcodedcodeForClothingwornDuringMeasure"
-          with:
-            fhir: "code.coding"
-            openehr: "$openehrRoot"
-          manual:
-            - name: "coding"
-              fhir:
-                - path: "system"
-                  value: "http://loinc.org"
-                - path: "code"
-                  value: "8352-7"
-                - path: "display"
-                  value: "Clothing worn during measure"
-
-        - name: "hardcodedValueUnderwearOrLess"
+        - name: "value"
           with:
             fhir: "valueCodeableConcept"
             openehr: "$openehrRoot"
-          followedBy:
-            mappings:
-              - name: "hardcodedCode"
-                with:
-                  fhir: "coding"
-                  openehr: "$openehrRoot"
-                manual:
-                  - name: "coding"
-                    fhir:
-                      - path: "system"
-                        value: "http://loinc.org"
-                      - path: "code"
-                        value: "LA11871-3"
-                      - path: "display"
-                        value: "Underwear or less"
-              - name: "hardcodedText"
-                with:
-                  fhir: "text"
-                  openehr: "$openehrRoot"
-
-  - name: "stateOfDressFullyDressedFullyClothedIncludingShoes"
-    with:
-      fhir: "$resource.component"
-      openehr: "$archetype/data[at0002]/events[at0003]/state[at0008]/items[at0009]/value/value"
-    openehrCondition:
-      targetRoot: "$archetype"
-      targetAttribute: "data[at0002]/events[at0003]/state[at0008]/items[at0009]/value/defining_code/code_string"
-      operator: "one of"
-      criteria: "[at0010]"
-    fhirCondition:
-      targetRoot: "$resource.component"
-      targetAttribute: "valueCodeableConcept"
-      operator: "one of"
-      criteria: "[$loinc.LA11873-9]"
-    followedBy:
-      mappings:
-        - name: "hardcodedcodeForClothingwornDuringMeasure"
-          with:
-            fhir: "code.coding"
-            openehr: "$openehrRoot"
-          manual:
-            - name: "coding"
-              fhir:
-                - path: "system"
-                  value: "http://loinc.org"
-                - path: "code"
-                  value: "8352-7"
-                - path: "display"
-                  value: "Clothing worn during measure"
-
-        - name: "hardcodedValue"
-          with:
-            fhir: "valueCodeableConcept"
-            openehr: "$openehrRoot"
-          followedBy:
-            mappings:
-              - name: "hardcodedCode"
-                with:
-                  fhir: "coding"
-                  openehr: "$openehrRoot"
-                manual:
-                  - name: "coding"
-                    fhir:
-                      - path: "system"
-                        value: "http://loinc.org"
-                      - path: "code"
-                        value: "LA11871-3"
-                      - path: "display"
-                        value: "Underwear or less"
-              - name: "hardcodedText"
-                with:
-                  fhir: "text"
-                  openehr: "$openehrRoot"
+          terminology:
+            type: "local"
+            conceptmap: "http://open-fhir.com/StateOfDress"

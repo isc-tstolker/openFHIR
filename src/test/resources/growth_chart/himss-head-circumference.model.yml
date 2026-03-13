@@ -9,19 +9,19 @@ spec: # schema specific to the FHIRConnect v0.0.1 engine
   openEhrConfig:
     archetype: "openEHR-EHR-OBSERVATION.head_circumference.v1"
   fhirConfig:
-    structureDefinition: http://hl7.org/fhir/StructureDefinition/Observation
+    structureDefinition: http://hl7.org/fhir/StructureDefinition/headcircum
 
 preprocessor:
   fhirConditions:
     - targetRoot: "$resource"
-      targetAttribute: "category.coding.code"
+      targetAttribute: "category.coding"
       operator: "one of"
-      criteria: "head_circumference"
+      criteria: "[http://terminology.hl7.org/CodeSystem/observation-category|vital-signs]"
 
     - targetRoot: "$resource"
       targetAttribute: "status"
       operator: "one of"
-      criteria: "final"
+      criteria: "[final]"
 
 mappings:
   - name: "headCircumference"
@@ -31,9 +31,9 @@ mappings:
       
     fhirCondition:
       targetRoot: "$resource"
-      targetAttribute: "code.coding.code"
+      targetAttribute: "code.coding"
       operator: "one of"
-      criteria: "[$loinc.8287-5]"
+      criteria: "[$loinc.9843-4]"
 
   - name: "time"
     with:

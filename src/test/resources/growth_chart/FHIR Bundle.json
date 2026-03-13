@@ -1,0 +1,189 @@
+{
+	"resourceType": "Bundle",
+	"entry": [
+		{
+			"fullUrl": "urn:uuid:5edcb2e1-f4aa-400e-a31e-1b0aab7c0c8e",
+			"resource": {
+				"resourceType": "Observation",
+				"meta": {
+					"profile": [
+						"http://hl7.org/fhir/StructureDefinition/bodyweight"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "vital-signs",
+								"display": "Vital Signs"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "29463-7",
+							"display": "Body weight"
+						}
+					]
+				},
+				"effectiveDateTime": "2022-02-03T04:05:06",
+				"valueQuantity": {
+					"value": 502,
+					"unit": "kg",
+					"system": "http://unitsofmeasure.org",
+					"code": "kg"
+				},
+				"note": [
+					{
+						"text": "Lorem ipsum"
+					}
+				],
+				"component": [
+					{
+						"code": {
+							"coding": [
+								{
+									"system": "http://loinc.org",
+									"code": "8352-7",
+									"display": "Clothing worn during measure"
+								}
+							]
+						},
+						"valueCodeableConcept": {
+							"coding": [
+								{
+									"system": "http://loinc.org",
+									"code": "LA11871-3",
+									"display": "Underwear or less"
+								}
+							],
+							"text": "Naked"
+						}
+					}
+				]
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:e7ed6ad2-2525-4957-a4e7-728c1672bb6b",
+			"resource": {
+				"resourceType": "Observation",
+				"meta": {
+					"profile": [
+						"http://hl7.org/fhir/StructureDefinition/bodyheight"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "vital-signs",
+								"display": "Vital Signs"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "8302-2",
+							"display": "Body height"
+						}
+					]
+				},
+				"effectiveDateTime": "2022-02-03T04:05:06",
+				"valueQuantity": {
+					"value": 500,
+					"unit": "cm",
+					"system": "http://unitsofmeasure.org",
+					"code": "cm"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:2708d46a-172a-4fc7-a694-0c55a4da30d7",
+			"resource": {
+				"resourceType": "Observation",
+				"meta": {
+					"profile": [
+						"http://hl7.org/fhir/StructureDefinition/bmi"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "vital-signs",
+								"display": "Vital Signs"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "39156-5",
+							"display": "Body mass index (BMI) [Ratio]"
+						}
+					]
+				},
+				"effectiveDateTime": "2022-02-03T04:05:06",
+				"valueQuantity": {
+					"value": 500,
+					"unit": "kg/m2",
+					"system": "http://unitsofmeasure.org",
+					"code": "kg/m2"
+				}
+			}
+		},
+		{
+			"fullUrl": "urn:uuid:549936a7-05b8-4fb0-9151-a21587ea7004",
+			"resource": {
+				"resourceType": "Observation",
+				"meta": {
+					"profile": [
+						"http://hl7.org/fhir/StructureDefinition/headcircum"
+					]
+				},
+				"status": "final",
+				"category": [
+					{
+						"coding": [
+							{
+								"system": "http://terminology.hl7.org/CodeSystem/observation-category",
+								"code": "vital-signs",
+								"display": "Vital Signs"
+							}
+						]
+					}
+				],
+				"code": {
+					"coding": [
+						{
+							"system": "http://loinc.org",
+							"code": "8287-5",
+							"display": "Head Occipital-frontal circumference by Tape measure"
+						}
+					]
+				},
+				"effectiveDateTime": "2022-02-03T04:05:06",
+				"valueQuantity": {
+					"value": 50,
+					"unit": "cm",
+					"system": "http://unitsofmeasure.org",
+					"code": "cm"
+				}
+			}
+		}
+	]
+}

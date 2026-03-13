@@ -9,14 +9,19 @@ spec: # schema specific to the FHIRConnect v0.0.1 engine
   openEhrConfig:
     archetype: "openEHR-EHR-OBSERVATION.height.v2"
   fhirConfig:
-    structureDefinition: http://hl7.org/fhir/StructureDefinition/Observation
+    structureDefinition: http://hl7.org/fhir/StructureDefinition/bodyheight
 
 preprocessor:
-  fhirCondition:
-    targetRoot: "$resource"
-    targetAttribute: "category.coding.code"
-    operator: "one of"
-    criteria: "height"
+  fhirConditions:
+    - targetRoot: "$resource"
+      targetAttribute: "category.coding"
+      operator: "one of"
+      criteria: "[http://terminology.hl7.org/CodeSystem/observation-category|vital-signs]"
+
+    - targetRoot: "$resource"
+      targetAttribute: "status"
+      operator: "one of"
+      criteria: "[final]"
 
 mappings:
   - name: "height"
@@ -26,7 +31,11 @@ mappings:
       
     fhirCondition:
       targetRoot: "$resource"
-      targetAttribute: "code.coding.code"
+      targetAttribute: "code.coding"
       operator: "one of"
       criteria: "[$loinc.8302-2]"
-      
+
+  - name: "time"
+    with:
+      fhir: "$resource.effective"
+      openehr: "$archetype/data[at0001]/events[at0002]/time"
