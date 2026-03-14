@@ -7,9 +7,9 @@
 grammar: FHIRConnect/v0.0.1
 type: model
 metadata:
-  name:  OBSERVATION.blood_pressure.v2
-  version: 0.0.1a # version of this particular mapping
-spec: # schema specific to the FHIRConnect v0.0.1 engine
+  name: OBSERVATION.blood_pressure.v2
+  version: 0.0.1a
+spec:
   system: FHIR
   version: R4
   openEhrConfig:
@@ -28,6 +28,7 @@ preprocessor:
       targetAttribute: "code.coding"
       operator: "one of"
       criteria: "[$loinc.85354-9]"
+      identifying: true
 
     - targetRoot: "$resource"
       targetAttribute: "status"
@@ -44,12 +45,11 @@ mappings:
       targetAttribute: "code.coding"
       operator: "one of"
       criteria: "[$loinc.8480-6, $snomed.271649006]"
-      identifying: true
     followedBy:
       mappings:
         - name: "value"
           with:
-            fhir: "component.value"
+            fhir: "valueQuantity"
             openehr: "$openehrRoot"
 
   - name: "diastolic"
@@ -65,7 +65,7 @@ mappings:
       mappings:
         - name: "value"
           with:
-            fhir: "component.value"
+            fhir: "valueQuantity"
             openehr: "$openehrRoot"
 
   - name: "clinicalInterpretation"
@@ -91,7 +91,6 @@ mappings:
           - path: "defining_code"
             value: "at1000"
 
-
   - name: "confoundingFactors"
     with:
       openehr: "$archetype/data[at0001]/events[at1042]/state[at0007]/items[at1052]"
@@ -101,7 +100,7 @@ mappings:
     with:
       fhir: "$resource.performer.as(Reference).display"
       value: "John Doe"
-      
+
   - name: "location"
     with:
       fhir: "$resource.bodySite"
