@@ -2,7 +2,7 @@
     "resourceType": "Bundle",
     "entry": [
         {
-            "fullUrl": "urn:uuid:1b1e6458-af77-48ff-814f-c2d9f1cc568c",
+            "fullUrl": "urn:uuid:3051ec0b-47bc-47ac-b532-7300a8960cac",
             "resource": {
                 "resourceType": "Observation",
                 "meta": {
@@ -32,9 +32,6 @@
                     ]
                 },
                 "effectiveDateTime": "2022-02-03T04:05:06",
-                "performer": [
-                    {}
-                ],
                 "interpretation": [
                     {
                         "text": "This is interpreted as 0th clin interpretation"
