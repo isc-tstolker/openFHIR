@@ -2,7 +2,7 @@
     "resourceType": "Bundle",
     "entry": [
         {
-            "fullUrl": "urn:uuid:e17a435b-97b6-4d50-b38e-821ee00c56b3",
+            "fullUrl": "urn:uuid:1b1e6458-af77-48ff-814f-c2d9f1cc568c",
             "resource": {
                 "resourceType": "Observation",
                 "meta": {
@@ -31,6 +31,7 @@
                         }
                     ]
                 },
+                "effectiveDateTime": "2022-02-03T04:05:06",
                 "performer": [
                     {}
                 ],
@@ -45,6 +46,12 @@
                     }
                 ],
                 "bodySite": {
+                    "coding": [
+                        {
+                            "system": "local",
+                            "code": "at0025"
+                        }
+                    ],
                     "text": "Right arm"
                 },
                 "component": [

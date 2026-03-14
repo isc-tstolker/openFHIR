@@ -36,6 +36,11 @@ preprocessor:
       criteria: "[final]"
 
 mappings:
+  - name: "time"
+    with:
+      fhir: "$resource.effective"
+      openehr: "$archetype/data[at0001]/events[at0006]/time"
+
   - name: "systolic"
     with:
       fhir: "$resource.component"
@@ -70,7 +75,7 @@ mappings:
 
   - name: "clinicalInterpretation"
     with:
-      fhir: "$resource.interpretation.text"
+      fhir: "$resource.interpretation"
       openehr: "$archetype/data[at0001]/events[at0006]/data[at0003]/items[at1059]"
 
   - name: "description"
@@ -105,8 +110,3 @@ mappings:
     with:
       fhir: "$resource.bodySite"
       openehr: "$archetype/protocol[at0011]/items[at0014]"
-    fhirCondition:
-      targetRoot: "$resource.bodySite"
-      targetAttribute: "text"
-      operator: "one of"
-      criteria: "Right arm"
