@@ -31,7 +31,7 @@ mappings:
       
     fhirCondition:
       targetRoot: "$resource"
-      targetAttribute: "code.coding"
+      targetAttribute: "code.coding.code"
       operator: "one of"
       criteria: "[$loinc.29463-7, $snomed.27113001]"
       
