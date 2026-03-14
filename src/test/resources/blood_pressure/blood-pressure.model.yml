@@ -15,50 +15,67 @@ spec: # schema specific to the FHIRConnect v0.0.1 engine
   openEhrConfig:
     archetype: openEHR-EHR-OBSERVATION.blood_pressure.v2
   fhirConfig:
-    structureDefinition: http://hl7.org/fhir/StructureDefinition/Observation
+    structureDefinition: http://hl7.org/fhir/StructureDefinition/bp
 
-# Actual mapping points:
+preprocessor:
+  fhirConditions:
+    - targetRoot: "$resource"
+      targetAttribute: "category.coding"
+      operator: "one of"
+      criteria: "[http://terminology.hl7.org/CodeSystem/observation-category|vital-signs]"
+
+    - targetRoot: "$resource"
+      targetAttribute: "code.coding"
+      operator: "one of"
+      criteria: "[$loinc.85354-9]"
+
+    - targetRoot: "$resource"
+      targetAttribute: "status"
+      operator: "one of"
+      criteria: "[final]"
+
 mappings:
-
-  # Another mapping which maps on a met condition. This condition is used to identify
-  # the correct "component" in the FHIR resource (array).
   - name: "systolic"
     with:
-      fhir: "$resource.component.value"
+      fhir: "$resource.component"
       openehr: "$archetype/data[at0001]/events[at0006]/data[at0003]/items[at0004]"
-      
     fhirCondition:
-      # One of the codings has to be the matching LOINC or SNOMED code.
-      # incl. implicit handling of arrays, as ".coding" is a set of codings.
-      # -> Here the backwards direction is ambiguous. The program will interpret "one of"
-      # as "put those in the target resource" if the direction is openEHR->FHIR.
-      targetRoot: "$resource.component"                       # Scope of object for 'condition'
-      targetAttribute: "code.coding.code" # Actual attribute to check for 'condition'
+      targetRoot: "$resource.component"
+      targetAttribute: "code.coding"
       operator: "one of"
       criteria: "[$loinc.8480-6, $snomed.271649006]"
-      identifying: true                                           # The *one* condition able to identify FHIR input to match this mapping
-    # The next step allows a mapping to have a list of succeeding mappings, which
-    # are executed in the same scope of the parent mapping.
+      identifying: true
+    followedBy:
+      mappings:
+        - name: "value"
+          with:
+            fhir: "component.value"
+            openehr: "$openehrRoot"
 
   - name: "diastolic"
     with:
-      fhir: "$resource.component.value"
+      fhir: "$resource.component"
       openehr: "$archetype/data[at0001]/events[at0006]/data[at0003]/items[at0005]"
-      
     fhirCondition:
-      targetRoot: "$resource.component"                       # Scope of object for 'condition'
-      targetAttribute: "code.coding.code" # Actual attribute to check for 'condition'
+      targetRoot: "$resource.component"
+      targetAttribute: "code.coding"
       operator: "one of"
       criteria: "[$loinc.8462-4]"
+    followedBy:
+      mappings:
+        - name: "value"
+          with:
+            fhir: "component.value"
+            openehr: "$openehrRoot"
 
   - name: "clinicalInterpretation"
     with:
-      fhir: "$resource.component.interpretation.text"
+      fhir: "$resource.interpretation.text"
       openehr: "$archetype/data[at0001]/events[at0006]/data[at0003]/items[at1059]"
 
   - name: "description"
     with:
-      fhir: "$resource.code.text"
+      fhir: "$resource.note.text"
       openehr: "$archetype/data[at0001]/events[at0006]/data[at0003]/items[at0033]"
 
   - name: "position"
@@ -80,13 +97,11 @@ mappings:
       openehr: "$archetype/data[at0001]/events[at1042]/state[at0007]/items[at1052]"
       value: "confounding factor"
 
-
   - name: "performerHardcodedInFhir"
     with:
       fhir: "$resource.performer.as(Reference).display"
       value: "John Doe"
       
-
   - name: "location"
     with:
       fhir: "$resource.bodySite"

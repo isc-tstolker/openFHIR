@@ -44,8 +44,6 @@ mappings:
     with:
       fhir: "$resource.method"
       openehr: "$archetype/protocol[at0011]/items[at1035]"
-#      type: CODEABLECONCEPT
-
 
   - name: manualLoincCode
     with:
@@ -79,14 +77,11 @@ mappings:
     with:
       fhir: "$resource.bodySite"
       openehr: "$archetype/protocol[at0011]/items[at0014]"
-#      type: CODEABLECONCEPT
-
 
   - name: position
     with:
       fhir: "$resource.extension.value"
       openehr: "$archetype/data[at0001]/events[at0006]/state[at0007]/items[at0008]"
-#      type: CODEABLECONCEPT
 
     fhirCondition:
       targetRoot: "$resource.extension"
@@ -98,8 +93,6 @@ mappings:
     with:
       fhir: "$resource.effective"
       openehr: "$archetype/data[at0001]/events[at0006]"
-#      type: DATETIME
-
 
   - name: componentParent
     with:
@@ -122,7 +115,6 @@ mappings:
                 with:
                   fhir: "value"
                   openehr: "data[at0003]/items[at0004]"
-#                  type: QUANTITY
 
               - name: "harcdcodingComponentCodeSystolic"
                 with:
@@ -152,7 +144,6 @@ mappings:
                 with:
                   fhir: "value"
                   openehr: "data[at0003]/items[at0005]"
-#                  type: QUANTITY
 
               - name: "harcdcodingComponentCodeDiastolic"
                 with:
@@ -183,7 +174,6 @@ mappings:
                 with:
                   fhir: "value"
                   openehr: "data[at0003]/items[at1006]"
-#                  type: QUANTITY
 
               - name: "harcdcodingComponentCodeAverageBloodPressure"
                 with:
@@ -215,7 +205,6 @@ mappings:
 #            fhir: "value"
             fhir: "value.as(CodeableConcept)"
             openehr: "$openehrRoot"
-#            type: CODEABLECONCEPT
 
         - name: "harcdcodingComponentCodeCuffType"
           with:
@@ -244,10 +233,8 @@ mappings:
       mappings:
         - name: diastolicEndpoint
           with:
-#            fhir: "value"
             fhir: "value.as(CodeableConcept)"
             openehr: "$openehrRoot"
-#            type: CODEABLECONCEPT
 
         - name: "harcdcodingComponentCodeDiastolicEndpoint"
           with:
