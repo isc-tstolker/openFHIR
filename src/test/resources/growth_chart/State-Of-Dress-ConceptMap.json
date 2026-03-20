@@ -2,6 +2,8 @@
 	"resourceType": "ConceptMap",
 	"id": "StateOfDress",
 	"url": "http://open-fhir.com/StateOfDress",
+	"name": "StateOfDress",
+	"status": "active",
 	"description": "Map State-Of-Dress codes from Loinc to openEHR v.v.",
 	"group": [
 		{
