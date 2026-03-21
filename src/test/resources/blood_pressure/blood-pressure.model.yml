@@ -36,6 +36,16 @@ preprocessor:
       criteria: "[final]"
 
 mappings:
+  - name: "subject.reference"
+    with:
+      fhir: "$resource.subject.reference"
+      value: "$patient"
+
+  - name: "performer"
+    with:
+      fhir: "$resource.performer"
+      openehr: "$composition/composer"
+
   - name: "time"
     with:
       fhir: "$resource.effective"
@@ -100,11 +110,6 @@ mappings:
     with:
       openehr: "$archetype/data[at0001]/events[at1042]/state[at0007]/items[at1052]"
       value: "confounding factor"
-
-  - name: "performerHardcodedInFhir"
-    with:
-      fhir: "$resource.performer.as(Reference).display"
-      value: "John Doe"
 
   - name: "location"
     with:

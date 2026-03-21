@@ -33,6 +33,16 @@ preprocessor:
       identifying: true
 
 mappings:
+  - name: "subject.reference"
+    with:
+      fhir: "$resource.subject.reference"
+      value: "$patient"
+
+  - name: "performer"
+    with:
+      fhir: "$resource.performer"
+      openehr: "$composition/composer"
+
   - name: "time"
     with:
       fhir: "$resource.effective"

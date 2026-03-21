@@ -24,18 +24,27 @@ preprocessor:
       criteria: "[final]"
 
 mappings:
-  - name: "height"
+  - name: "subject.reference"
     with:
-      fhir: "$resource.value"
-      openehr: "$archetype/data[at0001]/events[at0002]/data[at0003]/items[at0004]"
-      
-    fhirCondition:
-      targetRoot: "$resource"
-      targetAttribute: "code.coding"
-      operator: "one of"
-      criteria: "[$loinc.8302-2]"
+      fhir: "$resource.subject.reference"
+      value: "$patient"
+
+  - name: "performer"
+    with:
+      fhir: "$resource.performer"
+      openehr: "$composition/composer"
 
   - name: "time"
     with:
       fhir: "$resource.effective"
       openehr: "$archetype/data[at0001]/events[at0002]/time"
+
+  - name: "height"
+    with:
+      fhir: "$resource.value"
+      openehr: "$archetype/data[at0001]/events[at0002]/data[at0003]/items[at0004]"
+    fhirCondition:
+      targetRoot: "$resource"
+      targetAttribute: "code.coding"
+      operator: "one of"
+      criteria: "[$loinc.8302-2]"

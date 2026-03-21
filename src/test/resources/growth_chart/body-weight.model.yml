@@ -24,6 +24,21 @@ preprocessor:
       criteria: "[final]"
 
 mappings:
+  - name: "subject.reference"
+    with:
+      fhir: "$resource.subject.reference"
+      value: "$patient"
+
+  - name: "performer"
+    with:
+      fhir: "$resource.performer"
+      openehr: "$composition/composer"
+
+  - name: "time"
+    with:
+      fhir: "$resource.effective"
+      openehr: "$archetype/data[at0002]/events[at0003]/time"
+      
   - name: "weight"
     with:
       fhir: "$resource.value"
@@ -34,11 +49,6 @@ mappings:
       targetAttribute: "code.coding.code"
       operator: "one of"
       criteria: "[$loinc.29463-7, $snomed.27113001]"
-      
-  - name: "time"
-    with:
-      fhir: "$resource.effective"
-      openehr: "$archetype/data[at0002]/events[at0003]/time"
       
   - name: "comment"
     with:
